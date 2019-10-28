@@ -3,20 +3,20 @@ import estrutura
 
 class ManipulaCSV():
     
-    def __init__(self, arqIn, arqOut, vetor):
+    def __init__(self, arqIn, arqOut, i, vetor):
         self.arqIn = arqIn
         self.arqOut = arqOut
+        self.i = str(i)
         self.vetor = vetor
         self.listaRegistros = []
     
     def leitura_arquivo(self):
-        # preciso fazer a parada de encontrar o caminho generico
-        caminho = '/home/annecaroli/Documents/repos/ordenacao/data/'
+        caminho = '/home/annecaroli/Documents/repos/ordenacao/dados/'
         arquivo = open(caminho + self.arqIn)
-
+        
         linhas = csv.reader(arquivo)
         next(linhas) # pula a linha de cabecalho do arquivo
-
+        
         for linha in linhas:
             novoRegistro = estrutura.Estrutura()
             novoRegistro.set_email(linha[0])
@@ -28,14 +28,20 @@ class ManipulaCSV():
             self.listaRegistros.append(novoRegistro)
         return self.listaRegistros
     
-    # refazer
-    def escrita_arquivo(self):
-        arq = self.arqOut
-        
-        with open('arq', mode='w') as csvfile:
-            escreve = csv.writer(csvfile, delimiter=';', quoting=csv.QUOTE_MINIMAL)
-            escreve.writerow(['email', 'gender', 'uid', 'birthdate', 'height', 'weight'])
-            #for linha in self.vetor:
-                #escreve.writerow(linha)
-            #csvfile.close()
+        arquivo.close()
     
+    
+    def escrita_arquivo(self):
+        arq = self.arqIn[:-4] + "_" + self.arqOut + "_" + self.i
+        
+        with open(arq, mode='w') as csvfile:
+            escreve = csv.writer(csvfile, delimiter=';')
+            escreve.writerow(['email', 'gender', 'uid', 'birthdate', 'height', 'weight'])
+            for i in range(len(self.vetor)):
+                escreve.writerow([self.vetor[i].get_email(),
+                                 self.vetor[i].get_gender(),
+                                 self.vetor[i].get_uid(),
+                                 self.vetor[i].get_birthdate(),
+                                 self.vetor[i].get_height(),
+                                 self.vetor[i].get_weight()])
+        csvfile.close()

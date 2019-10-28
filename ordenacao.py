@@ -26,85 +26,99 @@ class Ordenacao():
                 j -= 1
             array[j+1] = chave
             
-    def mergesort(self):
-        array = self.lista
+    def mergesort(self, array): 
         if len(array) > 1: 
             meio = len(array) // 2
-            esq = array[:meio]  
-            dir = array[meio:] 
+              
+            instEsq = Ordenacao(array[:meio])
+            self.mergesort(instEsq.lista)
+            
+            instDir = Ordenacao(array[meio:])
+            self.mergesort(instDir.lista)
   
-        instEsq = Ordenacao(esq)
-        instEsq.mergesort()
-        instDir = Ordenacao(dir) 
-        instDir.mergesort() 
-        i = j = k = 0
-           
-        while i < len(esq) and j < len(dir): 
-            if esq[i] < dir[j]: 
-                array[k] = esq[i] 
+            i = j = k = 0
+          
+            while i < len(instEsq.lista) and j < len(instDir.lista): 
+                if instEsq.lista[i].get_uid() < instDir.lista[j].get_uid(): 
+                    array[k] = instEsq.lista[i] 
+                    i+=1
+                else: 
+                    array[k] = instDir.lista[j] 
+                    j+=1
+                k+=1
+          
+            while i < len(instEsq.lista): 
+                array[k] = instEsq.lista[i] 
                 i+=1
-            else: 
-                array[k] = dir[j] 
+                k+=1
+          
+            while j < len(instDir.lista): 
+                array[k] = instDir.lista[j] 
                 j+=1
-            k+=1
-          
-        while i < len(esq): 
-            array[k] = esq[i] 
-            i+=1
-            k+=1
-          
-        while j < len(dir): 
-            array[k] = dir[j] 
-            j+=1
-            k+=1
+                k+=1
 
-    def partition(array,low,high): 
-        i = ( low-1 )
-        pivot = arr[high] 
+    def partition(self, array, menor, maior): 
+        i = (menor - 1)
+        pivot = array[maior]
   
-        for j in range(low , high): 
-            if   arr[j] < pivot: 
-                i = i+1 
-                arr[i],arr[j] = arr[j],arr[i] 
-  
-        arr[i+1],arr[high] = arr[high],arr[i+1] 
-        return ( i+1 ) 
-
-    def quicksort(array,menor,maior): 
-        if menor < maior: 
-            pi = partition(array,menor,maior) 
-            quickSort(arr, low, pi-1) 
-            quickSort(arr, pi+1, high)
+        for j in range(menor, maior):  
+            if array[j].get_uid() < pivot.get_uid():  
+                i = i + 1 
+                array[i], array[j] = array[j], array[i] 
+        array[i+1], array[maior] = array[maior], array[i+1] 
+        return (i + 1) 
+ 
+    def quicksort(self, array, menor, maior):
+        if menor < maior:  
+            pi = self.partition(array, menor, maior)  
+            self.quicksort(array, menor, pi-1) 
+            self.quicksort(array, pi+1, maior) 
             
     def heapify(self, array, n, i): 
         maior = i 
-        esq = 2 * i + 1
-        dir = 2 * i + 2
-  
-        if esq < n and array[i] < array[esq]: 
+        esq = 2 * i + 1 
+        dir = 2 * i + 2 
+   
+        if esq < n and array[i].get_uid() < array[esq].get_uid(): 
             maior = esq 
         if dir < n and array[maior].get_uid() < array[dir].get_uid(): 
-            maior = dir 
+            maior = dir  
         if maior != i: 
-            array[i],array[maior] = array[maior],array[i] 
-  
-        #self.heapify(array, n, maior) 
-
-    def heapsort(self):
-        array = self.lista 
+            array[i], array[maior] = array[maior], array[i] 
+            self.heapify(array, n, maior)
+    
+    def heapsort(self): 
+        array = self.lista
         n = len(array) 
-   
+        
         for i in range(n, -1, -1): 
             self.heapify(array, n, i) 
-
-        for i in range(n-1, 0, -1): 
-            array[i], array[0] = array[0], array[i]
-            self.heapify(array, i, 0)
+        for i in range(n - 1, 0, -1): 
+            array[i], array[0] = array[0], array[i] 
+            self.heapify(array, i, 0) 
+    
+    """        
+    def timsort(self, array, n): 
+        RUN = 32
+        for i in range(0, n, RUN):
+            array = array[i:min((i+31), (n-1))]
+            instIns = Ordenacao(array)  
+            instIns.insertsort()
+        
+        tam = RUN 
+        while tam < n:
+            for esq in range(0, n, 2 * tam):  
+                #meio = esq + tam - 1 
+                #dir = min((esq + 2 * tam - 1), (n - 1))
+                instNovoArray = Ordenacao(array)
+                self.mergesort(instNovoArray) 
+            tam = 2 * tam
+    """ 
     
     def printa_ordenado(self):
         for item in self.lista:
             print(item)
-            
+
     def calcula_tamanho(self):
         i = 0
         while i < len(self.lista):
